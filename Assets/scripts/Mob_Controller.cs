@@ -16,35 +16,55 @@ public class Mob_Controller : MonoBehaviour
     public string feet_slot;
 
     public Node currentNode;
-    public List<Node> path = new List<Node>();
+    public List<Node> path;
 
+   
+    private float speed = 3;
 
-    // Update is called once per frame
-    void Update()
+    public enum States
     {
-        CreatePath();
+        Wander,
+        GoToCommsConsole,
     }
 
-    public void CreatePath()
-    {
-        if (path.Count > 0)
-        {
-            int x = 0;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(path[x].transform.position.x, path[x].transform.position.y, -2), 33333 * Time.deltaTime);
+    public States currentstate;
 
-            if (Vector2.Distance(transform.position, path[x].transform.position) < 0.1f)
-            {
-                currentNode = path[x];
-                path.RemoveAt(x);
-            }
-        }
-        else
+    private void Start()
+    {
+        currentstate = States.Wander;
+    }
+
+    private void Update()
+    {
+        switch (currentstate)
         {
-            Node[] nodes = FindObjectsOfType<Node>();
-            while (path == null || path.Count == 0)
-            {
-                path = AStarManager.instance.GeneratePath(currentNode, nodes[Random.Range(0, nodes.Length)]);
-            }
+            case States.Wander:
+                Wander();
+                break;
+            case States.GoToCommsConsole:
+                GoToCommsConsole();
+                break;
         }
+
+        if(currentstate != States.Wander)
+        {
+            currentstate = States.Wander;
+            path.Clear();
+        }
+        else if(currentstate != States.GoToCommsConsole && current_task == "Check Comms")
+        {
+            currentstate = States.GoToCommsConsole;
+            path.Clear();
+        }
+    }
+
+    void Wander()
+    {
+
+    }
+
+    void GoToCommsConsole()
+    {
+
     }
 }
